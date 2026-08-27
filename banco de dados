@@ -1,0 +1,242 @@
+-- phpMyAdmin SQL Dump
+-- version 5.2.1
+-- https://www.phpmyadmin.net/
+--
+-- Host: 127.0.0.1
+-- Tempo de geração: 05/08/2026 às 22:25
+-- Versão do servidor: 10.4.32-MariaDB
+-- Versão do PHP: 8.2.12
+
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+START TRANSACTION;
+SET time_zone = "+00:00";
+
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8mb4 */;
+
+--
+-- Banco de dados: `volei_db`
+--
+
+-- --------------------------------------------------------
+
+--
+-- Estrutura para tabela `campeonatos`
+--
+
+CREATE TABLE `campeonatos` (
+  `id_campeonato` int(11) NOT NULL,
+  `nome` varchar(150) NOT NULL,
+  `ano` year(4) NOT NULL,
+  `local` varchar(150) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Despejando dados para a tabela `campeonatos`
+--
+
+INSERT INTO `campeonatos` (`id_campeonato`, `nome`, `ano`, `local`) VALUES
+(1, 'Superliga Nacional', '2026', 'Diversas cidades'),
+(2, 'Copa Regional Sul', '2026', 'Curitiba');
+
+-- --------------------------------------------------------
+
+--
+-- Estrutura para tabela `jogadores`
+--
+
+CREATE TABLE `jogadores` (
+  `id_jogador` int(11) NOT NULL,
+  `nome` varchar(100) NOT NULL,
+  `posicao` enum('Levantador','Oposto','Central','Ponteiro','Líbero') NOT NULL,
+  `numero_camisa` int(11) DEFAULT NULL,
+  `data_nascimento` date DEFAULT NULL,
+  `altura` decimal(3,2) DEFAULT NULL,
+  `id_time` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Despejando dados para a tabela `jogadores`
+--
+
+INSERT INTO `jogadores` (`id_jogador`, `nome`, `posicao`, `numero_camisa`, `data_nascimento`, `altura`, `id_time`) VALUES
+(1, 'Lucas Andrade', 'Levantador', 7, '1998-04-12', 1.90, 1),
+(2, 'Rafael Souza', 'Oposto', 10, '1996-09-23', 2.02, 1),
+(3, 'Bruno Lima', 'Central', 15, '1999-01-05', 2.05, 2),
+(4, 'Carla Mendes', 'Ponteiro', 9, '2000-06-18', 1.85, 2),
+(5, 'Diego Torres', 'Líbero', 1, '1997-11-30', 1.78, 3);
+
+-- --------------------------------------------------------
+
+--
+-- Estrutura para tabela `partidas`
+--
+
+CREATE TABLE `partidas` (
+  `id_partida` int(11) NOT NULL,
+  `id_campeonato` int(11) NOT NULL,
+  `id_time_casa` int(11) NOT NULL,
+  `id_time_visitante` int(11) NOT NULL,
+  `data_partida` datetime NOT NULL,
+  `local` varchar(150) DEFAULT NULL
+) ;
+
+--
+-- Despejando dados para a tabela `partidas`
+--
+
+INSERT INTO `partidas` (`id_partida`, `id_campeonato`, `id_time_casa`, `id_time_visitante`, `data_partida`, `local`) VALUES
+(1, 1, 1, 2, '2026-08-10 19:00:00', 'Ginásio Municipal - Curitiba'),
+(2, 2, 1, 3, '2026-08-20 20:00:00', 'Arena Vôlei - Curitiba');
+
+-- --------------------------------------------------------
+
+--
+-- Estrutura para tabela `sets_partida`
+--
+
+CREATE TABLE `sets_partida` (
+  `id_set` int(11) NOT NULL,
+  `id_partida` int(11) NOT NULL,
+  `numero_set` tinyint(4) NOT NULL,
+  `pontos_casa` int(11) NOT NULL DEFAULT 0,
+  `pontos_visitante` int(11) NOT NULL DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Despejando dados para a tabela `sets_partida`
+--
+
+INSERT INTO `sets_partida` (`id_set`, `id_partida`, `numero_set`, `pontos_casa`, `pontos_visitante`) VALUES
+(1, 1, 1, 25, 20),
+(2, 1, 2, 23, 25),
+(3, 1, 3, 25, 18),
+(4, 1, 4, 25, 22);
+
+-- --------------------------------------------------------
+
+--
+-- Estrutura para tabela `times`
+--
+
+CREATE TABLE `times` (
+  `id_time` int(11) NOT NULL,
+  `nome` varchar(100) NOT NULL,
+  `cidade` varchar(100) DEFAULT NULL,
+  `tecnico` varchar(100) DEFAULT NULL,
+  `fundacao` year(4) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Despejando dados para a tabela `times`
+--
+
+INSERT INTO `times` (`id_time`, `nome`, `cidade`, `tecnico`, `fundacao`) VALUES
+(1, 'Vôlei Curitiba', 'Curitiba', 'Marcos Silva', '2005'),
+(2, 'Praia Clube', 'Uberlândia', 'Ana Paula Costa', '1999'),
+(3, 'Sesi Vôlei', 'Bauru', 'José Roberto', '2010');
+
+--
+-- Índices para tabelas despejadas
+--
+
+--
+-- Índices de tabela `campeonatos`
+--
+ALTER TABLE `campeonatos`
+  ADD PRIMARY KEY (`id_campeonato`);
+
+--
+-- Índices de tabela `jogadores`
+--
+ALTER TABLE `jogadores`
+  ADD PRIMARY KEY (`id_jogador`),
+  ADD KEY `id_time` (`id_time`);
+
+--
+-- Índices de tabela `partidas`
+--
+ALTER TABLE `partidas`
+  ADD PRIMARY KEY (`id_partida`),
+  ADD KEY `id_campeonato` (`id_campeonato`),
+  ADD KEY `id_time_casa` (`id_time_casa`),
+  ADD KEY `id_time_visitante` (`id_time_visitante`);
+
+--
+-- Índices de tabela `sets_partida`
+--
+ALTER TABLE `sets_partida`
+  ADD PRIMARY KEY (`id_set`),
+  ADD UNIQUE KEY `id_partida` (`id_partida`,`numero_set`);
+
+--
+-- Índices de tabela `times`
+--
+ALTER TABLE `times`
+  ADD PRIMARY KEY (`id_time`);
+
+--
+-- AUTO_INCREMENT para tabelas despejadas
+--
+
+--
+-- AUTO_INCREMENT de tabela `campeonatos`
+--
+ALTER TABLE `campeonatos`
+  MODIFY `id_campeonato` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT de tabela `jogadores`
+--
+ALTER TABLE `jogadores`
+  MODIFY `id_jogador` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
+-- AUTO_INCREMENT de tabela `partidas`
+--
+ALTER TABLE `partidas`
+  MODIFY `id_partida` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de tabela `sets_partida`
+--
+ALTER TABLE `sets_partida`
+  MODIFY `id_set` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
+-- AUTO_INCREMENT de tabela `times`
+--
+ALTER TABLE `times`
+  MODIFY `id_time` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- Restrições para tabelas despejadas
+--
+
+--
+-- Restrições para tabelas `jogadores`
+--
+ALTER TABLE `jogadores`
+  ADD CONSTRAINT `jogadores_ibfk_1` FOREIGN KEY (`id_time`) REFERENCES `times` (`id_time`) ON DELETE SET NULL ON UPDATE CASCADE;
+
+--
+-- Restrições para tabelas `partidas`
+--
+ALTER TABLE `partidas`
+  ADD CONSTRAINT `partidas_ibfk_1` FOREIGN KEY (`id_campeonato`) REFERENCES `campeonatos` (`id_campeonato`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `partidas_ibfk_2` FOREIGN KEY (`id_time_casa`) REFERENCES `times` (`id_time`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `partidas_ibfk_3` FOREIGN KEY (`id_time_visitante`) REFERENCES `times` (`id_time`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Restrições para tabelas `sets_partida`
+--
+ALTER TABLE `sets_partida`
+  ADD CONSTRAINT `sets_partida_ibfk_1` FOREIGN KEY (`id_partida`) REFERENCES `partidas` (`id_partida`) ON DELETE CASCADE ON UPDATE CASCADE;
+COMMIT;
+
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
